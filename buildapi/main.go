@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -34,6 +35,21 @@ func (c *Course) IsEmpty() bool {
 }
 
 func main() {
+	r := mux.NewRouter()
+	courses = append(courses, Course{CourseId: "2", CourseName: "ReactJS", CoursePrice: 299, Author: &Author{Fullname: "Hitesh Choudhary", Website: "lco.dev"}})
+	courses = append(courses, Course{CourseId: "4", CourseName: "MERN Stack", CoursePrice: 199, Author: &Author{Fullname: "Hitesh Choudhary", Website: "go.dev"}})
+
+	//listening to a port
+	log.Fatal(http.ListenAndServe(":3000", r))
+	fmt.Println("Running on PORT 3000")
+
+	//routing
+	r.HandleFunc("/", serveHome).Methods("GET")
+	r.HandleFunc("/courses", getAllCourses).Methods("GET")
+	r.HandleFunc("/course/{id}", getOneCourse).Methods("GET")
+	r.HandleFunc("/course", createOneCourse).Methods("POST")
+	r.HandleFunc("/course/{id}", updateOneCourse).Methods("PUT")
+	r.HandleFunc("/course/{id}", deleteOneCourse).Methods("DELETE")
 
 }
 
@@ -107,6 +123,21 @@ func updateOneCourse(w http.ResponseWriter, r *http.Request) {
 			course.CourseId = params["id"]
 			courses = append(courses, course)
 			json.NewEncoder(w).Encode(course)
+		}
+	}
+}
+
+func deleteOneCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(("Deletes Course"))
+	w.Header().Set("Content-Type", "application/json")
+	//first go ahead and grab id from req
+
+	params := mux.Vars(r)
+	for index, course := range courses {
+		if course.CourseId == params["id"] {
+			courses = append(courses[:index], courses[index+1:]...)
+			json.NewEncoder(w).Encode("removed the course")
+			break
 		}
 	}
 }
