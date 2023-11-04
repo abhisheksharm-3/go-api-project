@@ -39,9 +39,7 @@ func main() {
 	courses = append(courses, Course{CourseId: "2", CourseName: "ReactJS", CoursePrice: 299, Author: &Author{Fullname: "Hitesh Choudhary", Website: "lco.dev"}})
 	courses = append(courses, Course{CourseId: "4", CourseName: "MERN Stack", CoursePrice: 199, Author: &Author{Fullname: "Hitesh Choudhary", Website: "go.dev"}})
 
-	//listening to a port
-	log.Fatal(http.ListenAndServe(":3000", r))
-	fmt.Println("Running on PORT 3000")
+	fmt.Println("Running on PORT 8888")
 
 	//routing
 	r.HandleFunc("/", serveHome).Methods("GET")
@@ -51,6 +49,8 @@ func main() {
 	r.HandleFunc("/course/{id}", updateOneCourse).Methods("PUT")
 	r.HandleFunc("/course/{id}", deleteOneCourse).Methods("DELETE")
 
+	//listening to a port
+	log.Fatal(http.ListenAndServe(":8888", r))
 }
 
 //controllers - file
